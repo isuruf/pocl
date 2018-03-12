@@ -41,7 +41,9 @@ before_install:
 script:
   - mkdir build && cd build
   - cmake .. -DCMAKE_INSTALL_PREFIX=/tmp $MY_CMAKE_LLVM_CONFIG $MY_CMAKE_LIBCXX $MY_CMAKE_ICD_OFF
-  - make
+  - cat CMakeFiles/CMakeError.log
+  - cat CMakeFiles/CMakeOutput.log
+  - make -j2 -k
   - make check
   - make install
 
