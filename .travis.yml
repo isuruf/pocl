@@ -14,11 +14,6 @@ matrix:
   exclude:
     - os: linux
       compiler: clang
-  allow_failures:
-    - os: osx
-      compiler: clang
-    - os: osx
-      compiler: gcc
 
 addons:
   apt:
@@ -49,7 +44,7 @@ before_install:
 
 script:
   - mkdir build && cd build
-  - cmake .. -DCMAKE_INSTALL_PREFIX=/tmp $MY_CMAKE_PREFIX_PATH $MY_CMAKE_LIBCXX $MY_CMAKE_ICD_OFF
+  - cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp $MY_CMAKE_PREFIX_PATH $MY_CMAKE_LIBCXX $MY_CMAKE_ICD_OFF
   - cat CMakeFiles/CMakeError.log
   - cat CMakeFiles/CMakeOutput.log
   - make -j2 -k
