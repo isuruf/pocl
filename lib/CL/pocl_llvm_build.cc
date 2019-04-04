@@ -53,6 +53,20 @@ IGNORE_COMPILER_WARNING("-Wstrict-aliasing")
 
 #include "llvm/Support/MutexGuard.h"
 
+#if defined(ENABLE_POCL_RELOCATION)
+#if defined(__linux__)
+#include <dlfcn.h>
+#elif defined(__APPLE__)
+#define _DARWIN_C_SOURCE
+#include <dlfcn.h>
+#endif
+#ifndef LLVM_OLDER_THAN_7_0
+#include <lld/Common/Driver.h>
+#else
+#include <lld/Driver/Driver.h>
+#endif
+#endif
+
 #include <iostream>
 #include <sstream>
 
@@ -68,14 +82,6 @@ IGNORE_COMPILER_WARNING("-Wstrict-aliasing")
 #include "pocl_cache.h"
 #include "LLVMUtils.h"
 
-#if defined(ENABLE_POCL_RELOCATION)
-#if defined(__linux__)
-#include <dlfcn.h>
-#elif defined(__APPLE__)
-#define _DARWIN_C_SOURCE
-#include <dlfcn.h>
-#endif
-#endif
 
 using namespace clang;
 using namespace llvm;
@@ -957,5 +963,29 @@ int pocl_invoke_clang(cl_device_id Device, const char** Args) {
     return -1;
   }
 
+}
+#endif
+
+#ifdef ENABLE_POCL_RELOCATION
+/**
+ * Invoke the ld.lld compiler through its Driver API.
+ *
+ * @param Args the command line arguments that would be passed to lld
+ *             (a NULL terminated list). Args[0] should be the path to
+ *             the Clang binary.
+ * @return 0 on success, error code otherwise.
+ */
+int pocl_invoke_lld(const char** Args) {
+  const char **ArgsEnd = Args;
+  while (*ArgsEnd++ != nullptr) {}
+
+  llvm::ArrayRef<const char*> ArgsArray(Args, ArgsEnd);
+
+  bool success = lld::elf::link(ArgsArray, false);
+  if (!success) {
+     return -1;
+  } else {
+     return 0;
+  }
 }
 #endif

@@ -235,6 +235,15 @@ foreach(LIBNAME ${CLANG_LIBNAMES})
   endif()
 endforeach()
 
+if (ENABLE_POCL_RELOCATION)
+    set(CLANG_LIBNAMES ${CLANG_LIBNAMES} lldElf)
+    if(LLVM_OLDER_THAN_6_0)
+        set(CLANG_LIBNAMES ${CLANG_LIBNAMES} lldConfig lldCore)
+    else()
+        set(CLANG_LIBNAMES ${CLANG_LIBNAMES} lldCommon)
+    endif()
+endif()
+
 # With Visual Studio llvm-config gives invalid list of static libs (libXXXX.a instead of XXXX.lib)
 # we extract the pure names (LLVMLTO, LLVMMipsDesc etc) and let find_library do its job
 foreach(LIBFLAG ${LLVM_LIBS})

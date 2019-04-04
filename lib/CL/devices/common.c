@@ -192,7 +192,27 @@ llvm_codegen (char *output, unsigned device_i, cl_kernel kernel,
 
   POCL_MSG_PRINT_INFO ("Linking final module\n");
 
-#ifdef LLVM_OLDER_THAN_5_0
+#if !defined(LLVM_OLDER_THAN_5_0)
+  /* Link through Clang/lld driver interface who knows the correct toolchains
+     for all of its targets.  */
+  const char *cmd_line[64] =
+#ifdef ENABLE_POCL_RELOCATION
+    {"ld.lld",
+#else
+    {CLANG,
+#endif
+     "-o", tmp_module, tmp_objfile};
+  const char **device_ld_arg = device->final_linkage_flags;
+  const char **pos = &cmd_line[4];
+  while ((*pos++ = *device_ld_arg++)) {}
+
+#ifdef ENABLE_POCL_RELOCATION
+  error = pocl_invoke_lld (cmd_line);
+#else
+  error = pocl_invoke_clang (device, cmd_line);
+#endif
+
+#else
   /* with older LLVMs, link by invoking ld or clang */
   char *const args1[]
 #if defined(LINK_WITH_CLANG)
@@ -206,17 +226,6 @@ llvm_codegen (char *output, unsigned device_i, cl_kernel kernel,
           HOST_LD_FLAGS_ARRAY,
           NULL };
   error = pocl_run_command (args1);
-
-#else
-  /* Link through Clang driver interface who knows the correct toolchains
-     for all of its targets.  */
-  const char *cmd_line[64] =
-    {CLANG, "-o", tmp_module, tmp_objfile};
-  const char **device_ld_arg = device->final_linkage_flags;
-  const char **pos = &cmd_line[4];
-  while ((*pos++ = *device_ld_arg++)) {}
-
-  error = pocl_invoke_clang (device, cmd_line);
 #endif
 
   if (error)

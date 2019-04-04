@@ -128,6 +128,10 @@ int pocl_llvm_link_program(cl_program program,
 int pocl_invoke_clang(cl_device_id Device, const char** Args);
 #endif
 
+#ifdef ENABLE_POCL_RELOCATION
+int pocl_invoke_lld(const char** Args);
+#endif
+
 #ifdef __GNUC__
 #pragma GCC visibility pop
 #endif
