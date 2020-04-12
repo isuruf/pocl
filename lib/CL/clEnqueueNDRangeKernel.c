@@ -608,7 +608,7 @@ if (local_##c1 > 1 && local_##c1 <= local_##c2 && local_##c1 <= local_##c3 && \
   if (pocl_cq_profiling_enabled)
     {
       pocl_cq_profiling_register_event (command_node->event);
-      clRetainKernel (kernel);
+      POname(clRetainKernel) (kernel);
       command_node->event->meta_data->kernel = kernel;
     }
 
