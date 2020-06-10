@@ -630,6 +630,10 @@ file(RELATIVE_PATH POCL_INSTALL_PRIVATE_LIBDIR_REL ${POCL_INSTALL_PUBLIC_LIBDIR}
 
 ######################################################################################
 
+option(LINK_WITH_LLD_LIBS NO "Link with LLD libraries instead of using clang driver")
+
+######################################################################################
+
 option(ENABLE_SLEEF "Use SLEEF for kernel library" ON)
 
 option(ENABLE_CONFORMANCE "Enable conformance to OpenCL standard. Disabling this may enable slightly faster kernel library functions (at a price of range/precision). Note that enabling this does not guarantee conformance (depends on hardware)" ON)

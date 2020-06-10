@@ -52,6 +52,10 @@ IGNORE_COMPILER_WARNING("-Wstrict-aliasing")
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Module.h"
 
+#ifdef LINK_WITH_LLD_LIBS
+#include <lld/Common/Driver.h>
+#endif
+
 #ifdef ENABLE_RELOCATION
 
 #if defined(__APPLE__)
@@ -955,3 +959,53 @@ int pocl_invoke_clang(cl_device_id Device, const char** Args) {
   }
 
 }
+
+const char* pocl_lld_driver_name() {
+  // path here is used only to detect the driver mode
+#if defined(__APPLE__)
+  return "/bin/ld64.lld";
+#elif defined(_MSC_VER)
+  return "lld-link.exe";
+#else
+  return "/bin/ld.lld";
+#endif
+}
+
+#ifdef LINK_WITH_LLD_LIBS
+/**
+ * Invoke the ld.lld compiler through its Driver API.
+ *
+ * @param Args the command line arguments that would be passed to lld
+ *             (a NULL terminated list). Args[0] shoud be the 
+ *             correct linker name.
+ * @return 0 on success, error code otherwise.
+ */
+int pocl_invoke_lld(char* const* Args) {
+  char * const*ArgsEnd = Args;
+  while (*ArgsEnd++ != nullptr) {}
+
+  llvm::ArrayRef<const char*> ArgsArray(Args, ArgsEnd);
+
+  bool success = false;
+#if defined(__APPLE__)
+#ifdef LLVM_OLDER_THAN_7_0
+  success = lld::mach_o::link(ArgsArray);
+#else
+  success = lld::mach_o::link(ArgsArray, false);
+#endif
+#elif defined(__linux__)
+  success = lld::elf::link(ArgsArray, false);
+#elif defined(_WIN32)
+#ifdef LLVM_OLDER_THAN_7_0
+  success = lld::coff::link(ArgsArray);
+#else
+  success = lld::coff::link(ArgsArray, false);
+#endif
+#endif
+  if (!success) {
+     return -1;
+  } else {
+     return 0;
+  }
+}
+#endif

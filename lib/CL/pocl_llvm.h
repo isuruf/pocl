@@ -122,6 +122,10 @@ int pocl_llvm_link_program(cl_program program,
 
 int pocl_invoke_clang(cl_device_id Device, const char** Args);
 
+#ifdef LINK_WITH_LLD_LIBS
+const char* pocl_lld_driver_name();
+int pocl_invoke_lld(char* const* Args);
+#endif
 
 #ifdef __cplusplus
 }

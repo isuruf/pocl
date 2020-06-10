@@ -202,12 +202,26 @@ llvm_codegen (char *output, unsigned device_i, cl_kernel kernel,
   /* Link through Clang driver interface who knows the correct toolchains
      for all of its targets.  */
   const char *cmd_line[64] =
-    {CLANG, "-o", tmp_module, tmp_objfile};
+    {
+#if defined(LINK_WITH_LLD_LIBS)
+      pocl_lld_driver_name(),
+#else
+      CLANG,
+      "-nostartfiles",
+#endif
+      "-o",
+      tmp_module,
+      tmp_objfile
+    };
   const char **device_ld_arg = device->final_linkage_flags;
   const char **pos = &cmd_line[4];
   while ((*pos++ = *device_ld_arg++)) {}
 
+#if defined(LINK_WITH_LLD_LIBS)
+  error = pocl_invoke_lld (cmd_line);
+#else
   error = pocl_invoke_clang (device, cmd_line);
+#endif
 
   if (error)
     {
@@ -1342,7 +1356,7 @@ pocl_calculate_kernel_hash (cl_program program, unsigned kernel_i,
 #define DEFAULT_WG_SIZE 4096
 
 static const char *final_ld_flags[] =
-  {"-lm", "-nostartfiles", HOST_LD_FLAGS_ARRAY, NULL};
+  {"-lm", HOST_LD_FLAGS_ARRAY, NULL};
 
 static cl_device_partition_property basic_partition_properties[1] = { 0 };
 static const cl_image_format supported_image_formats[] = {
