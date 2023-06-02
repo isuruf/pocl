@@ -880,6 +880,16 @@ void mapLibDeviceCalls(llvm::Module *Module) {
     {"remquo", "__nv_remquo"},
     {"remquof", "__nv_remquof"},
 
+    {"native_cosf", "__nv_fast_vosf"},
+    {"native_exp10f", "__nv_fast_exp10f"},
+    {"native_expf", "__nv_fast_expf"},
+    {"native_dividef", "__nv_fast_fdividef"},
+    {"native_log10f", "__nv_fast_log10f"},
+    {"native_log2f", "__nv_fast_log2f"},
+    {"native_logf", "__nv_fast_log"},
+    {"native_powrf", "__nv_fast_powf"},
+    {"native_sinf", "__nv_fast_sinf"},
+    {"native_tanf", "__nv_fast_tanf"},
     // TODO: lgamma_r
     // TODO: rootn
   };
