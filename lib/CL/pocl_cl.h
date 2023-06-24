@@ -1055,6 +1055,9 @@ struct _cl_device_id {
   const char* llvm_target_triplet; /* the llvm target triplet to use */
   const char* llvm_cpu; /* the llvm CPU variant to use */
   const char* llvm_fp_contract_mode; /* the floating point contract mde to use */
+  const char* kernellib_name; /* bitcode kernel library name */
+  const char* kernellib_fallback_name; /* bitcode kernel fallback library name */
+  const char* kernellib_subdir; /* bitcode kernel library subdir */
   /* A running number (starting from zero) across all the device instances.
      Used for indexing arrays in data structures with device specific
      entries. */

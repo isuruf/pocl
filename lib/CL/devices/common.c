@@ -1666,9 +1666,32 @@ pocl_init_default_device_infos (cl_device_id dev)
   dev->llvm_cpu = pocl_get_llvm_cpu_name ();
 #endif
 
+  std::string kernellib = "kernel-";
+  std::string kernellib_fallback;
+  kernellib += dev->llvm_target_triplet;
+
+  kernellib += '-';
+#ifdef KERNELLIB_HOST_DISTRO_VARIANTS
+  kernellib += getX86KernelLibName();
+#elif defined(HOST_CPU_FORCED)
+  kernellib += OCL_KERNEL_TARGET_CPU;
+#else
+  kernellib_fallback = kernellib;
+  kernellib_fallback += OCL_KERNEL_TARGET_CPU;
+  if (device->llvm_cpu)
+    kernellib += device->llvm_cpu;
+#endif
+
+  dev->kernellib_name = strdup(kernellib.c_str());
+  dev->kernellib_fallback_name = strdup(kernellib_fallback.c_str());
+  dev->kernellib_subdir = "host";
+
 #else /* No compiler, no CPU info */
   dev->llvm_cpu = NULL;
   dev->llvm_target_triplet = "";
+  dev->kernellib_name = NULL;
+  dev->kernellib_fallback_name = NULL;
+  dev->kernellib_subdir = NULL;
 #endif
 
 #ifdef ENABLE_SPIRV

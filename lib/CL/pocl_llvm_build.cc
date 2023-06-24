@@ -997,68 +997,31 @@ static llvm::Module *getKernelLibrary(cl_device_id device,
 
   const char *subdir = "host";
   bool is_host = true;
-  // TODO: move this to the device layer, a property to ask for
-  // the kernel builtin bitcode library name, including its subdir
-#if defined(TCE_AVAILABLE)
-  if (triple.getArch() == Triple::tce || triple.getArch() == Triple::tcele) {
-    subdir = "tce";
-    is_host = false;
-  }
-#endif
-#ifdef BUILD_HSA
-  if (triple.getArch() == Triple::hsail64) {
-    subdir = "hsail64";
-    is_host = false;
-  }
-#endif
-#ifdef AMDGCN_ENABLED
-  if (triple.getArch == Triple::amdgcn) {
-    subdir = "amdgcn";
-    is_host = false;
-  }
-#endif
-#ifdef BUILD_CUDA
-  if (triple.getArch() == Triple::nvptx ||
-      triple.getArch() == Triple::nvptx64) {
-    subdir = "cuda";
-    is_host = false;
-  }
-#endif
 
-  std::string kernellib;
-  std::string kernellib_fallback;
+  std::string kernellib_common, kernellib, kernellib_fallback;
 
 #ifdef ENABLE_POCL_BUILDING
   if (pocl_get_bool_option("POCL_BUILDING", 0)) {
-    kernellib = BUILDDIR;
-    kernellib += "/lib/kernel/";
-    kernellib += subdir;
+    kernellib_common = BUILDDIR;
+    kernellib_common += "/lib/kernel/";
+    kernellib_common += device->kernellib_subdir;
   } else // POCL_BUILDING == 0, use install dir
 #endif
   {
     char temp[POCL_MAX_PATHNAME_LENGTH];
     pocl_get_private_datadir(temp);
-    kernellib = temp;
+    kernellib_common = temp;
   }
 
-  kernellib += "/kernel-";
-  kernellib += device->llvm_target_triplet;
+  kernellib_common += "/";
 
-  if (is_host) {
-    kernellib += '-';
-#ifdef KERNELLIB_HOST_DISTRO_VARIANTS
-    kernellib += getX86KernelLibName();
-#elif defined(HOST_CPU_FORCED)
-    kernellib += OCL_KERNEL_TARGET_CPU;
-#else
-    kernellib_fallback = kernellib;
-    kernellib_fallback += OCL_KERNEL_TARGET_CPU;
-    kernellib_fallback += ".bc";
-    if (device->llvm_cpu)
-      kernellib += device->llvm_cpu;
-#endif
-  }
+  kernellib = kernellib_common + device->kernellib_name;
   kernellib += ".bc";
+
+  if (device->kernellib_fallback_name) {
+    kernellib_fallback = kernellib_common + device->kernellib_fallback_name;
+    kernellib_fallback += ".bc";
+  }
 
   llvm::Module *lib;
 
