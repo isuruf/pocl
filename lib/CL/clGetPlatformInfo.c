@@ -105,6 +105,10 @@ static const char *pocl_version
       ", CUDA"
 #endif
 
+#ifdef BUILD_METAL
+      ", METAL"
+#endif
+
 #ifdef BUILD_HSA
       ", HSA"
 #endif

@@ -223,6 +223,8 @@ option(ENABLE_VULKAN "Experimental and incomplete driver that uses the Vulkan AP
 
 option(ENABLE_LEVEL0 "Experimental and incomplete driver that uses the Level Zero API for controlling the device. Please refer to the user manual for the status and open tasks" OFF)
 
+option(ENABLE_METAL "Experimental and incomplete driver that uses Metal for Apple GPUs. Please refer to the user manual for the status and open tasks" OFF)
+
 option(ENABLE_PROXY_DEVICE "Enable proxy driver for proxying to another OpenCL implementation" OFF)
 
 option(ENABLE_PROXY_DEVICE_INTEROP "Enable OpenGL- or EGL-interop with the proxy driver" OFF)
@@ -1707,6 +1709,26 @@ if(ENABLE_CUDA)
   endif()
   set(CUDA_DEVICE_CL_VERSION "120")
   set(CUDA_DEVICE_CL_STD "1.2")
+endif()
+
+##########################################################
+
+if(ENABLE_METAL)
+  set(OCL_DRIVERS "${OCL_DRIVERS} metal")
+  set(OCL_TARGETS "${OCL_TARGETS} metal")
+  # this is for config.h
+  # TODO unify with autotools
+  set(BUILD_METAL 1)
+
+  set(METAL_DEVICE_EXTENSIONS "cl_khr_byte_addressable_store cl_khr_global_int32_base_atomics cl_khr_global_int32_extended_atomics cl_khr_local_int32_base_atomics cl_khr_local_int32_extended_atomics cl_khr_int64_base_atomics cl_khr_int64_extended_atomics")
+  if(METAL_SPIR)
+    set(METAL_DEVICE_EXTENSIONS "${METAL_DEVICE_EXTENSIONS} cl_khr_spir")
+  endif()
+  if(ENABLE_SPIRV)
+    set(METAL_DEVICE_EXTENSIONS "${METAL_DEVICE_EXTENSIONS} cl_khr_il_program")
+  endif()
+  set(METAL_DEVICE_CL_VERSION "120")
+  set(METAL_DEVICE_CL_STD "1.2")
 endif()
 
 ##########################################################

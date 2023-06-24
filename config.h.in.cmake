@@ -5,6 +5,7 @@
 
 #cmakedefine BUILD_HSA
 #cmakedefine BUILD_CUDA
+#cmakedefine BUILD_METAL
 #cmakedefine BUILD_BASIC
 #cmakedefine BUILD_PTHREAD
 #cmakedefine BUILD_ALMAIF
@@ -108,6 +109,12 @@
 #if defined(BUILD_CUDA)
 
 #define CUDA_DEVICE_EXTENSIONS "@CUDA_DEVICE_EXTENSIONS@"
+
+#endif
+
+#if defined(BUILD_METAL)
+
+#define METAL_DEVICE_EXTENSIONS "@METAL_DEVICE_EXTENSIONS@"
 
 #endif
 

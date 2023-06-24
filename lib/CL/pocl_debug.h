@@ -94,6 +94,7 @@ extern "C" {
 #define POCL_DEBUG_FLAG_PROXY 0x1000
 #define POCL_DEBUG_FLAG_ALMAIF_MMAP 0x2000
 #define POCL_DEBUG_FLAG_LEVEL0 0x4000
+#define POCL_DEBUG_FLAG_METAL 0x8000
 
 #define POCL_DEBUG_FLAG_VULKAN 0x80000
 
@@ -242,6 +243,8 @@ POCL_EXPORT
     #define POCL_MSG_PRINT_VULKAN(...) POCL_MSG_PRINT_INFO_F(VULKAN, "", __VA_ARGS__)
     #define POCL_MSG_PRINT_CUDA2(errcode, ...) POCL_MSG_PRINT_INFO_F(CUDA, errcode, __VA_ARGS__)
     #define POCL_MSG_PRINT_CUDA(...) POCL_MSG_PRINT_INFO_F(CUDA, "", __VA_ARGS__)
+    #define POCL_MSG_PRINT_METAL2(errcode, ...) POCL_MSG_PRINT_INFO_F(METAL, errcode, __VA_ARGS__)
+    #define POCL_MSG_PRINT_METAL(...) POCL_MSG_PRINT_INFO_F(METAL, "", __VA_ARGS__)
     #define POCL_MSG_PRINT_HSA2(errcode, ...) POCL_MSG_PRINT_INFO_F(HSA, errcode, __VA_ARGS__)
     #define POCL_MSG_PRINT_HSA(...) POCL_MSG_PRINT_INFO_F(HSA, "", __VA_ARGS__)
     #define POCL_MSG_PRINT_TCE2(errcode, ...) POCL_MSG_PRINT_INFO_F(TCE, errcode, __VA_ARGS__)
@@ -291,6 +294,8 @@ POCL_EXPORT
     #define POCL_MSG_PRINT_VULKAN(...)  do {} while (0)
     #define POCL_MSG_PRINT_CUDA2(...)  do {} while (0)
     #define POCL_MSG_PRINT_CUDA(...)  do {} while (0)
+    #define POCL_MSG_PRINT_METAL2(...)  do {} while (0)
+    #define POCL_MSG_PRINT_METAL(...)  do {} while (0)
     #define POCL_MSG_PRINT_HSA2(...)  do {} while (0)
     #define POCL_MSG_PRINT_HSA(...)  do {} while (0)
     #define POCL_MSG_PRINT_TCE2(...)  do {} while (0)
