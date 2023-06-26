@@ -92,6 +92,10 @@
 #include "level0/pocl-level0.h"
 #endif
 
+#ifdef BUILD_METAL
+#include "metal/pocl-metal.h"
+#endif
+
 #define MAX_ENV_NAME_LEN 1024
 #define MAX_DEV_NAME_LEN 64
 
@@ -158,6 +162,9 @@ static init_device_ops pocl_devices_init_ops[] = {
 #ifdef BUILD_LEVEL0
   INIT_DEV (level0),
 #endif
+#ifdef BUILD_METAL
+  INIT_DEV (metal),
+#endif
 };
 
 #define POCL_NUM_DEVICE_TYPES (sizeof(pocl_devices_init_ops) / sizeof((pocl_devices_init_ops)[0]))
@@ -189,6 +196,9 @@ char pocl_device_types[POCL_NUM_DEVICE_TYPES][30] = {
 #endif
 #ifdef BUILD_LEVEL0
   "level0",
+#endif
+#ifdef BUILD_METAL
+  "metal",
 #endif
 };
 
