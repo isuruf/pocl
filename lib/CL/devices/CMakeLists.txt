@@ -143,6 +143,22 @@ if(ENABLE_CUDA)
   endif()
 endif()
 
+if(BUILD_METAL)
+  add_subdirectory("metal")
+  set(POCL_DEVICES_OBJS "${POCL_DEVICES_OBJS}"
+    "$<TARGET_OBJECTS:pocl-devices-metal>")
+
+  if(NOT ENABLE_LOADABLE_DRIVERS)
+    list(APPEND POCL_DEVICES_LINK_LIST
+        -framework Metal
+        -framework MetalKit
+        -framework AppKit
+        -framework Foundation
+        -framework QuartzCore
+    )
+  endif()
+endif()
+
 set(POCL_DEVICES_SOURCES
   devices.h  devices.c
   bufalloc.c  bufalloc.h
