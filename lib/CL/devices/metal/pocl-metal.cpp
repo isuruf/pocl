@@ -29,7 +29,7 @@
 #include "common_driver.h"
 #include "devices.h"
 #include "pocl-metal.h"
-#include "pocl-air-gen.h"
+//#include "pocl-air-gen.h"
 #include "pocl.h"
 #include "pocl_cache.h"
 #include "pocl_file_util.h"
@@ -60,9 +60,8 @@
 
 typedef struct pocl_metal_device_data_s
 {
-  CUdevice device;
-  CUcontext context;
-  CUevent epoch_event;
+  MTL::Device device;
+  MTL::Event epoch_event;
   cl_ulong epoch;
   char libdevice[PATH_MAX];
   pocl_lock_t compile_lock;
@@ -72,7 +71,7 @@ typedef struct pocl_metal_device_data_s
 
 typedef struct pocl_metal_queue_data_s
 {
-  CUstream stream;
+  MTL::CommandQueue stream;
   int use_threads;
   pthread_t submit_thread;
   pthread_t finalize_thread;
@@ -86,19 +85,20 @@ typedef struct pocl_metal_queue_data_s
 
 typedef struct pocl_metal_kernel_data_s
 {
-  CUmodule module;
-  CUmodule module_offsets;
-  CUfunction kernel;
-  CUfunction kernel_offsets;
+  MTL::ComputePipelineState module;
+  MTL::ComputePipelineState module_offsets;
+  MTL::Function kernel;
+  MTL::Function kernel_offsets;
   size_t *alignments;
-  CUdeviceptr constant_mem_base;
+  //FIXME
+  size_t* constant_mem_base;
   size_t constant_mem_size;
 } pocl_metal_kernel_data_t;
 
 typedef struct pocl_metal_event_data_s
 {
-  CUevent start;
-  CUevent end;
+  MTL::Event start;
+  MTL::Event end;
   volatile int events_ready;
   cl_int *ext_event_flag;
   pthread_cond_t event_cond;
