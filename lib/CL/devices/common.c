@@ -1666,24 +1666,25 @@ pocl_init_default_device_infos (cl_device_id dev)
   dev->llvm_cpu = pocl_get_llvm_cpu_name ();
 #endif
 
-  std::string kernellib = "kernel-";
-  std::string kernellib_fallback;
-  kernellib += dev->llvm_target_triplet;
+  char kernellib[4096];
+  char kernellib_fallback[4096];
+  strcat(kernellib, "kernel-");
+  strcat(kernellib, dev->llvm_target_triplet);
 
-  kernellib += '-';
+  strcat(kernellib, "-");
 #ifdef KERNELLIB_HOST_DISTRO_VARIANTS
-  kernellib += getX86KernelLibName();
+  strcat(kernellib, getX86KernelLibName());
 #elif defined(HOST_CPU_FORCED)
-  kernellib += OCL_KERNEL_TARGET_CPU;
+  strcat(kernellib, OCL_KERNEL_TARGET_CPU);
 #else
-  kernellib_fallback = kernellib;
-  kernellib_fallback += OCL_KERNEL_TARGET_CPU;
-  if (device->llvm_cpu)
-    kernellib += device->llvm_cpu;
+  strcat(kernellib_fallback, kernellib);
+  strcat(kernellib_fallback, OCL_KERNEL_TARGET_CPU);
+  if (dev->llvm_cpu)
+    strcat(kernellib, dev->llvm_cpu);
 #endif
 
-  dev->kernellib_name = strdup(kernellib.c_str());
-  dev->kernellib_fallback_name = strdup(kernellib_fallback.c_str());
+  dev->kernellib_name = strdup(kernellib);
+  dev->kernellib_fallback_name = strdup(kernellib_fallback);
   dev->kernellib_subdir = "host";
 
 #else /* No compiler, no CPU info */
