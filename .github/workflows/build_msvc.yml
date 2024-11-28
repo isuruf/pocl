@@ -24,6 +24,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref || github.run_id }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: cmd /C call {0}
+
 jobs:
   msvc_test_matrix:
     name: LLVM ${{ matrix.llvm_version }} - ${{ matrix.config }}
@@ -46,19 +50,23 @@ jobs:
         with:
           arch: x64
 
-      - name: Install Ninja
-        uses: llvm/actions/install-ninja@a1ea791b03c8e61f53a0e66f2f73db283aa0f01e
-
-      - name: Download LLVM ${{ matrix.llvm_version }}
-        run: |
-          Invoke-WebRequest https://github.com/llvm/llvm-project/releases/download/llvmorg-${{ matrix.llvm_version }}/LLVM-${{ matrix.llvm_version }}-Windows-X64.tar.xz -OutFile llvm.tar.xz
-          7z.exe x -so llvm.tar.xz | 7z.exe x -si -ttar
-          mv LLVM-${{ matrix.llvm_version }}-Windows-X64 install-llvm
+      - uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-name: pocl-deps
+          init-shell: cmd.exe
+          create-args: >-
+            llvmdev=${{ matrix.llvm_version }}
+            clangdev=${{ matrix.llvm_version }}
+            ninja
 
       - name: Load Env vars
         id: load-env
         run: |
           cat ${{ github.workspace }}/.github/variables.txt >> $GITHUB_ENV
+
+      - name: Check llvm
+        run:
+          where llvm-config.exe
 
       # Keep this aligned with the Windows/MSVC build instructions
       # (docs/sphinx/source/windows.rst). This configuration step is
@@ -70,7 +78,6 @@ jobs:
               -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}\install-pocl
               -DENABLE_ICD=0
               -DENABLE_LLVM=1
-              -DWITH_LLVM_CONFIG=${{ github.workspace }}\install-llvm\bin\llvm-config.exe
               -DENABLE_LOADABLE_DRIVERS=OFF
               -DSTATIC_LLVM=ON
               -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL
