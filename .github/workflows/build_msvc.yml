@@ -91,6 +91,7 @@ jobs:
               -DSTATIC_LLVM=ON ^
               -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL ^
               -DBUILD_SHARED_LIBS=OFF ^
+              -DCMAKE_BUILD_TYPE=Release ^
               -G "Ninja"
 
       - name: Build PoCL
