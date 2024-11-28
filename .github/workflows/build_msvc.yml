@@ -45,50 +45,13 @@ jobs:
         with:
           arch: x64
 
-      - name: Install Ninja
-        uses: llvm/actions/install-ninja@a1ea791b03c8e61f53a0e66f2f73db283aa0f01e
-
-      # Building LLVM from sources because the official binary
-      # packages doesn't include libraries or llvm-config.exe.
-      - name: Checkout LLVM
-        id: checkout-llvm
-        uses: actions/checkout@v4
+      - uses: conda-incubator/setup-miniconda@v3
         with:
-          repository: llvm/llvm-project
-          ref: release/${{ matrix.llvm_version }}.x
-          path: llvm-project
+          miniforge-version: latest
 
-      - name: Restore Cached LLVM
-        id: cache-llvm
-        uses: actions/cache@v4
-        with:
-          path: install-llvm\**
-          key: llvm-${{ matrix.llvm_version }}-${{ runner.os }}-${{ steps.checkout-llvm.outputs.commit }}
-
-      - if: ${{ steps.cache-llvm.outputs.cache-hit != 'true' }}
-        name: Configure LLVM
-        run:
-          cmake -S llvm-project\llvm -B build-llvm
-              -DCMAKE_BUILD_TYPE=Release
-              -DLLVM_ENABLE_PROJECTS=clang
-              -DLLVM_TARGETS_TO_BUILD=host
-              -DCMAKE_INSTALL_PREFIX=install-llvm
-              -G "Ninja"
-
-      - if: ${{ steps.cache-llvm.outputs.cache-hit != 'true' }}
-        name: Install LLVM
+      - name: Install dependencies
         run: |
-          cmake --build build-llvm
-          cmake --install build-llvm
-
-      # Save the LLVM installation result so we don't have to rebuild
-      # it in case a PoCL step fail ahead.
-      - if: ${{ steps.cache-llvm.outputs.cache-hit != 'true' }}
-        name: Save LLVM
-        uses: actions/cache/save@v4
-        with:
-          path: install-llvm\**
-          key: llvm-${{ matrix.llvm_version }}-${{ runner.os }}-${{ steps.checkout-llvm.outputs.commit }}
+          conda install llvmdev=${{ matrix.llvm_version }} ninja cmake
 
       - name: Load Env vars
         id: load-env
