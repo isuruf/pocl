@@ -38,6 +38,7 @@ jobs:
       matrix:
         llvm_version: [19, 18]
         config: [cpu]
+        enable_icd: [off, on]
 
     steps:
       - name: Checkout PoCL
@@ -88,7 +89,7 @@ jobs:
           cmake -S . -B build-pocl ^
               -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}\install-pocl ^
               -DCMAKE_PREFIX_PATH=%DEPS_DIR% ^
-              -DENABLE_ICD=1 ^
+              -DENABLE_ICD={{ matrix.enable_icd }} ^
               -DENABLE_LLVM=1 ^
               -DENABLE_LOADABLE_DRIVERS=OFF ^
               -DSTATIC_LLVM=ON ^
@@ -111,4 +112,4 @@ jobs:
           }
           mkdir ${{ env.POCL_CACHE_DIR }}
           cd ${{ github.workspace }}\build-pocl
-          & ${{ github.workspace }}\tools\scripts\run_cpu_tests.ps1 $CTEST_FLAGS -j$Env:NUMBER_OF_PROCESSORS
+          & ${{ github.workspace }}\tools\scripts\run_cpu_tests.ps1 --output-on-failure -j$Env:NUMBER_OF_PROCESSORS
