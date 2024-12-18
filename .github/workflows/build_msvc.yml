@@ -40,6 +40,9 @@ jobs:
         shared_libs: [ON, OFF]
         config: [cpu]
         enable_icd: [ON, OFF]
+        exclude:
+          - enable_icd: ON
+            shared_libs: OFF
 
     steps:
       - name: Checkout PoCL
