@@ -33,6 +33,8 @@ if(ENABLE_SPIRV)
   harden(spirv_fix_atomic_compare_exchange)
   target_link_libraries(spirv_fix_atomic_compare_exchange poclu ${OPENCL_LIBS})
   target_include_directories(spirv_fix_atomic_compare_exchange PRIVATE "${SPVSRC}")
+  # Avoid POCL_EXPORT here
+  target_compile_definitions(spirv_fix_atomic_compare_exchange PRIVATE SPIRV_PARSER_EXPORT)
 endif()
 
 if(ENABLE_POCLCC)
