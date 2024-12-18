@@ -28,7 +28,10 @@ if (!$Env:OCL_ICD_FILENAMES) {
 }
 
 # To find loadable drivers
-$Env:Path = "$Env:Path;" + (Get-Location) + "\lib\CL\devices"
+$devices_path = "" + (Get-Location) + "\lib\CL\devices"
+$Env:Path = "$Env:Path;" + $devices_path
+mkdir ($devices_path + "\pocl")
+Get-ChildItem -Path $devices_path -Filter pocl-devices-*.dll -Recurse -ErrorAction SilentlyContinue -Force | Copy-Item -Destination ($devices_path + "\pocl")
 
 if (Test-Path -Path $Env:OCL_ICD_FILENAMES) {
     write-host "Using OCL_ICD_FILENAMES: $Env:OCL_ICD_FILENAMES"
