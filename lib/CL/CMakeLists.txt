@@ -267,8 +267,8 @@ if (ENABLE_LLVM)
   harden("lib_cl_llvm")
   if(BUILD_SHARED_LIBS AND MSVC)
     # Inject __declspec(dllexport).
-    target_compile_definitions(libpocl_unlinked_objs PRIVATE EXPORT_POCL_LIB)
-    target_compile_definitions(libpocl_unlinked_objs INTERFACE IMPORT_POCL_LIB)
+    target_compile_definitions(lib_cl_llvm PRIVATE EXPORT_POCL_LIB)
+    target_compile_definitions(lib_cl_llvm INTERFACE IMPORT_POCL_LIB)
   endif()
 
   if(OCL_ICD_INCLUDE_DIRS)
