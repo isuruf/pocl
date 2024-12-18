@@ -27,6 +27,9 @@ if (!$Env:OCL_ICD_FILENAMES) {
     $Env:OCL_ICD_FILENAMES = "" + (Get-Location) + "\lib\CL\pocl.dll"
 }
 
+# To find loadable drivers
+$Env:Path = "$Env:Path;" + (Get-Location) + "\lib\CL\devices"
+
 if (Test-Path -Path $Env:OCL_ICD_FILENAMES) {
     write-host "Using OCL_ICD_FILENAMES: $Env:OCL_ICD_FILENAMES"
 } else {
