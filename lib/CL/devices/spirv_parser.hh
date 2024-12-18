@@ -28,7 +28,9 @@
 
 #include "pocl_export.h"
 
-#ifndef SPIRV_PARSER_EXPORT
+#ifdef SPIRV_PARSER_LIB
+#define SPIRV_PARSER_EXPORT
+#else
 #define SPIRV_PARSER_EXPORT POCL_EXPORT
 #endif
 
