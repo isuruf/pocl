@@ -121,7 +121,7 @@ jobs:
           }
 
           # For loadable drivers
-          $env.Path = $env.Path + ";" + ${{ github.workspace }}\install-pocl\lib
+          $env.Path = $env.Path + ";${{ github.workspace }}\install-pocl\lib"
 
           if (Test-Path -path ${{ env.POCL_CACHE_DIR }}) {
             rm -r ${{ env.POCL_CACHE_DIR }}
